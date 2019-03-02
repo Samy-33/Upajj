@@ -146,17 +146,17 @@ def chatDriver(query,location=None,user=None):
         return customer_support()
 
     # check for any flow that exists.
-    #try:
-    location = entities[0]['value']
-    logger.debug("location")
-    logger.debug(location)
-    logger.debug(ctx)
-    if valid_location(location) and ctx == "#flow_crop_prediction_location":
-        logger.debug("oh yeah")
-        BotContext.set_location_context_from_session(user,location,"#flow_crop_prediction_season")
-        return crop_forecasting_season()
-    #except:
-    #    pass
+    try:
+        location = entities[0]['value']
+        logger.debug("location")
+        logger.debug(location)
+        logger.debug(ctx)
+        if valid_location(location) and ctx == "#flow_crop_prediction_location":
+            logger.debug("oh yeah")
+            BotContext.set_location_context_from_session(user,location,"#flow_crop_prediction_season")
+            return crop_forecasting_season()
+    except Exception as e:
+       logger.debug(f'Exception:: {e}')
 
     if 'crop_forecasting' in intents:
         return crop_forecasting(entities,location)
