@@ -25,7 +25,7 @@ SECRET_KEY = 'z1u5n#yx7%!q*v-ixkg8)jwj5%()%mb*&o-da)++n&rty=n=p('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,7 +40,8 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'rest_framework'
+    'rest_framework',
+    'corsheaders'
 ]
 
 BUSINESS_APPS = [
@@ -124,6 +125,26 @@ USE_L10N = True
 
 USE_TZ = True
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = (
+    'localhost:4200',
+)
+CORS_ORIGIN_REGEX_WHITELIST = (
+    'localhost:4200',
+)
+CORS_ALLOW_HEADERS = (
+    'access-control-allow-origin',
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
