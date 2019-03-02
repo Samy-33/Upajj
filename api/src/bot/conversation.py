@@ -60,7 +60,7 @@ def get_response(chat):
     response = conversation.message(workspace_id=workspace_id, input={'text': chat})
     return response
 
-def chatDriver(query,location="Jabalpur"):
+def chatDriver(query,location=None,user=None):
 
     intents = []
     entities = []
@@ -153,7 +153,7 @@ def greeting(response):
     ''' returns greetings messages'''
     data = {}
     data["text"] = response['output']['text'][0] + '\n' + 'I can help you with crop forcasting, pesticide suggestion, fertilizers, weather reports, suggestions to best practice for crop cultivation and much more.'
-    data["options"] = flows
+    data["options"] = greeting_flow()
     return data
 
 # flows defined for the greetings
@@ -166,6 +166,13 @@ def greeting_flow():
     flows.append({"key":"#flow_cultivation","value": "Cultivation"})
     flows.append({"key":"#flow_support","value": "Customer Support"})
     return flows
+
+def flow_weather(loaction,user):
+    if location is None:
+
+def ChatDriverFlow(query,location=None,user=None):
+    if query == "#flow_weather":
+        flow_weather(loaction,user)
 
 def weather(location_id):
 
