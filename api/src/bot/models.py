@@ -15,23 +15,30 @@ class BotContext(models.Model):
     context = models.TextField(max_length=1000, null=True)
 
     @staticmethod
-    def get_context_from_session(session_key):
+    def get_bot_context_from_session(session_key):
         '''Get context object using session key
         '''
         if session_key:
-            context, ignore = BotContext.objects.get_or_create(session=session_key)
+            bot_context, ignore = BotContext.objects.get_or_create(session=session_key)
         else:
-            context = BotContext.objects.create()
+            bot_context = BotContext.objects.create()
 
-        return context.context
+        return bot_context
+
+    @staticmethod
+    def get_context_from_session(session_key):
+    	bot_context = BotContext.get_bot_context_from_session(session_key)
+    	return bot_context.context
 
     @staticmethod
     def set_context_from_session(session,ctx):
-        BotContext.objects.update(session=session,context=ctx)
+        bot_context = BotContext.objects.get(session=session)
+        bot_context.context = ctx
+        bot_context.save()
 
     @staticmethod
     def get_location_from_session(session):
-    	location = BotContext.objects.get_or_create(session=session).location
+    	location = BotContext.objects.get(session=session).location
     	return location
 
     @staticmethod

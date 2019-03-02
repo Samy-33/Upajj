@@ -18,16 +18,20 @@ class ChatView(APIView):
         location = request.data.get('location', '')
         option = request.data.get('option', '')
         session_key = request.data.get('key', '')
-
-        bot_cotext = BotContext.get_context_from_session(session_key)
         logger.debug(request.data)
+        bot_cotext = BotContext.get_bot_context_from_session(session_key)
+        logger.debug(request.data)
+        return_data = {}
         if text:
             return_data = chatDriver(
                 text, location=location, user=bot_cotext.session)
         else:
             return_data = ChatDriverFlow(
                 option, location=location, user=bot_cotext.session)
-        return_data.update({'key': bot_cotext.session})
+            logger.debug(return_data)
+            if not return_data:
+            	return_data = {}
+        return_data['key'] = bot_cotext.session
 
         return Response(return_data)
 

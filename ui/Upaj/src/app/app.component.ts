@@ -42,10 +42,11 @@ export class AppComponent implements OnInit {
     this.current_query = new Query();
     this.http.post<BotResponse>(CHAT_URL, query, httpOptions).subscribe((res) => { 
       this.bot_thinking = false;
-      console.log(res);
+      // console.log(res);
       this.push_conv(false, res.text);
       this.key = res.key;
-      this.current_options = res.options;
+      console.log(res.options);
+      this.current_options = res.options ? res.options: new Array<Option>();
     }, () => {
       this.bot_thinking = false;
       this.push_conv(false, "Drat! We ran into an error we didn't expect. Try again maybe!");
