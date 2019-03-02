@@ -201,7 +201,7 @@ def cultivation(response):
         count+=1
 
     return_data = {}
-    return_data["link"] = video_link
+    return_data["links"] = video_link
     return_data = clear_flow(return_data)
     return return_data
 
@@ -494,7 +494,7 @@ def crop_forecasting_v2(user,location,season):
     now = datetime.datetime.now()
     data = pd.read_csv('csv_files/crop_production.csv')
     data = data.values
-    output2 = ""
+    output2 = []
     
     if(True):
         # print (str(season).lower() + " " + str(location).lower())
@@ -552,15 +552,15 @@ def crop_forecasting_v2(user,location,season):
                 break
             if(predicted_crop[i][0] > 0):
                 index+=1
-                output2 += str(index) + " " +predicted_crop[i][1] + " " + str(predicted_crop[i][0]) + " metric tonne/hectare \n"
+                output2.append(str(index) + " " +predicted_crop[i][1] + " " + str(predicted_crop[i][0]) + " metric tonne/hectare \n")
 
     data_return = {}
     if (len(output2) == 0):
         data_return = {}
         data_return["text"] = "Not data found for the region"
     else:
-        output2 = "List of possible crop which can be grown with there approximate production this season \n" + output2
-        data_return["text"] = output2
+        output2.insert(0,"List of possible crop which can be grown with there approximate production this season \n")
+        data_return["list"] = output2
 
     data_return = clear_flow(data_return)
     return data_return
