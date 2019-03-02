@@ -30,3 +30,8 @@ class ChatView(APIView):
         return_data.update({'key': bot_cotext.session})
 
         return Response(return_data)
+
+
+class VoiceChatView(APIView):
+    def post(self, request):
+        pass

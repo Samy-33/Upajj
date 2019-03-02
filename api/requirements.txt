@@ -30,4 +30,6 @@ django-heroku
 Pillow
 django-debug-toolbar
 pylint-django==2.0.6
+SpeechRecognition
+goslate
 https://launchpad.net/python-weather-api/trunk/0.3.8/+download/pywapi-0.3.8.tar.gz
