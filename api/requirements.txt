@@ -28,4 +28,6 @@ whitenoise==4.1.1
 django-cors-headers
 django-heroku
 Pillow
+django-debug-toolbar
+pylint-django==2.0.6
 https://launchpad.net/python-weather-api/trunk/0.3.8/+download/pywapi-0.3.8.tar.gz
