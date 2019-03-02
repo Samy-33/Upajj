@@ -85,12 +85,6 @@ export class AppComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit() {
-    var query = new Query();
-    query.text = "Hey";
-    query.key = this.key;
-    query.location = "Jabalpur";
-    query.lang = this.selected_lang;
-    this.push_query(query);
   }
 
   ngAfterContentChecked() {
