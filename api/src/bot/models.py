@@ -21,3 +21,8 @@ class BotContext(models.Model):
    	def get_location_from_session(session):
    		location = BotContext.objects.get_or_create(session=session)
    		return location
+
+   	@staticmethod
+   	def get_season_from_session(session):
+   		season = BotContext.objects.get_or_create(session=session)
+   		return season
