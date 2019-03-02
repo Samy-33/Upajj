@@ -108,7 +108,7 @@ def chatDriver(query,location=None,user=None):
         return location_suggestions(entities,location)
 
     if 'cost' in intents:
-        return minimum_support_price_prediction(response)
+        return minimum_support_price_prediction(response,user=user)
 
     if 'pesticide' in intents:
         return pesticide(entities)
@@ -287,7 +287,7 @@ def ChatDriverFlow(query,location=None,user=None):
     if query == "#flow_cost":
         crop = BotContext.get_crop_from_session(user)
         data_return = {}
-        if crop is None or crop == '':
+        if not (crop is None or crop == ''):
             data_return["text"] = "Do you want the Minimum support Price for crop " + crop + " ?"
             data_return["options"] = [{"key":"#msp_yes","value":"Yes"},{"key":"#msp_no_ask_crop","value":"No"}]
             return data_return
@@ -302,12 +302,12 @@ def ChatDriverFlow(query,location=None,user=None):
 
     if query == "#msp_no_ask_crop":
         BotContext.set_context_from_session(user,"#minimum_support_price")
+        data_return = {}
         data_return["text"] = "Please tell me the crop name for which Minimum Price is required."
         data_return["options"] = []
         return data_return
 
 def weather(location_id):
-
     ''' returns weather conditions for a given location id '''
     weather_data = pywapi.get_weather_from_weather_com(location_id)
     print(weather_data)
@@ -380,13 +380,14 @@ def pesticide(entities):
     except:
         return response_encoder("No data for the specified disease! Please try after some time.")
 
-def minimum_support_price_prediction(response,crop_name=None):
+def minimum_support_price_prediction(response,crop_name=None,user=None):
 
     ''' provides a predicted minimum support price '''
 
     if crop_name is None:
         try:
             crop = response['entities'][0]['value']
+            BotContext.set_crop_from_session(user,crop)
         except:
             return_data = {}
             return_data["text"] = "Could not find crop name. Please specify the proper crop name alongside the query."
