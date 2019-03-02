@@ -51,9 +51,6 @@ Mixins
     top: 0;
     left: 0;
     z-index: 1;
-    background: url('https://images.unsplash.com/photo-1451186859696-371d9477be93?crop=entropy&fit=crop&fm=jpg&h=975&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1925') no-repeat 0 0;
-    filter: blur(80px);
-    transform: scale(1.2);
   }
   
   
@@ -154,7 +151,7 @@ Mixins
       margin-left: 35px;
       margin-right: 10px;
       position: relative;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    //   text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
       
       .timestamp {
         position: absolute;
