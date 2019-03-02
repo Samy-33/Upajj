@@ -10,10 +10,11 @@ import pandas as pd
 import json
 import requests
 from bs4 import BeautifulSoup
+from .models import BotContext
 
 # from sklearn.tree import
 
-DATA_GOV_API ='579b464db66ec23bdd000001f4159aa056f849bb6c7922a7a5c2cc99'
+DATA_GOV_API = '579b464db66ec23bdd000001f4159aa056f849bb6c7922a7a5c2cc99'
 
 conversation = watson_developer_cloud.ConversationV1(
 
@@ -39,8 +40,6 @@ def variance(values, xmean):
 
 # Calculate coefficients
 def coefficients(X,Y):
-	x = X
-	y = Y
 	x_mean, y_mean = mean(X), mean(Y)
 	b1 = covariance(X, x_mean, Y, y_mean) / variance(X, x_mean)
 	b0 = y_mean - b1 * x_mean
@@ -60,8 +59,16 @@ def get_response(chat):
     response = conversation.message(workspace_id=workspace_id, input={'text': chat})
     return response
 
-def chatDriver(query,location="Jabalpur"):
-
+def chatDriver(query,location=None,user=None):
+    if user in not None:
+        ctx = BotContext.get_context_from_session(user)
+        # Getting Context
+        if ctx is "#new_location_weather":
+            BotContext.set_context_from_session(user,"")
+            query += "Weather for"
+        if ctx is "#flow_crop_prediction_location":
+            BotContext.set_context_from_session(user,"")
+            
     intents = []
     entities = []
 
@@ -167,6 +174,55 @@ def greeting_flow():
     flows.append({"key":"#flow_support","value": "Customer Support"})
     return flows
 
+def ask_location():
+    data = {}
+    data["text"] = "Please enter location ?"
+    return data
+
+def flow_weather(loaction,user):
+    if location is None:
+        location = BotContext.get_location_from_session(user)
+        if location is None:
+            return ask_location()
+    return location_suggestions(None,city=location)
+
+def crop_forecasting_season():
+    data = {}
+    data["text"] = "Please choose one of the given season ?"
+    data["options"] = [{"key":"#crop_forcasting_rabi","value":"Rabi"},{"key":"#crop_forcasting_kharif","value":"Kharif"},{"key":"#crop_forcasting_autumn","value":"Autumn"},{"key":"#crop_forcasting_wholeyear","value":"Whole Year"}] 
+
+def ChatDriverFlow(query,location=None,user=None):
+    if query is "#flow_weather":
+        data = flow_weather(loaction,user)
+        data["options"] = [{"key":"#new_location_weather","value":"Yes"},{"key":"#clear","value":"No"}]
+        return data
+    if query is "#new_location_weather":
+        BotContext.set_context_from_session(user,"#new_location_weather")
+        return ask_location()
+    if query is "#clear":
+        BotContext.set_context_from_session(user,"")
+        data = {}
+        data["text"] = "Anything else I can help you with ?"
+        data["options"] = greeting_flow()
+        return data
+
+    if query is "#flow_crop_prediction":
+        location = BotContext.get_location_from_session(user)
+        if location is not None or location is not "":
+            data = {}
+            data["text"] = "Do you want it for this " + location + " ?"
+            data["options"] = [{"key":"#flow_crop_prediction_location_yes","value":"Yes"},{"key":"#flow_crop_prediction_location_no","value":"No"}]
+            return data
+        else:
+            BotContext.set_context_from_session(user,"#flow_crop_prediction_location")
+            return ask_location()
+
+    if query is "#flow_crop_prediction_location_no":
+        return crop_forecasting_season()
+
+    if query is "#flow_crop_prediction_location_yes":
+        return 
+
 def weather(location_id):
 
     ''' returns weather conditions for a given location id '''
@@ -179,7 +235,7 @@ def weather(location_id):
 
     return response
 
-def location_suggestions(entities,city="Jabalpur"):
+def location_suggestions(entities,city=None):
 
     ''' facilitates search of location '''
     # print(entities[0]["value"])
@@ -189,6 +245,7 @@ def location_suggestions(entities,city="Jabalpur"):
     except:
         location = city
 
+    data_return = {}
     try:
         # data = pywapi.get_location_id(location)
         weather_data_url = 'https://api.openweathermap.org/data/2.5/weather?q=' + location + ',in&appid=c4ebee5432d574b968a2332bfa6ab6f4&units=metric'
@@ -204,9 +261,11 @@ def location_suggestions(entities,city="Jabalpur"):
         elif ("clouds" in discription.lower()):
             response_text += ". Overcast might be there, take care for your crop."
         # print(response_text)
-        return response_encoder(response_text)
+        data_return["text"] = response_text
+        return response_text
     except:
-        return response_encoder("Sorry! The location is not covered.")
+        data_return["text"] = "Sorry! Couldn't find for your location"
+        return data_return
 
     # if len(data) is 1:
     #     for loc_id, location in data.items():
