@@ -1,11 +1,14 @@
 from django.db import models
 import uuid
 
+def get_default_value_for_session():
+    return uuid.uuid4().__str__()
 
 class BotContext(models.Model):
     '''Model to store current context of the user queries
     '''
-    session = models.CharField(max_length=50, unique=True, default=lambda: uuid.uuid4().__str__())
+
+    session = models.CharField(max_length=50, unique=True, default=get_default_value_for_session)
     location = models.CharField(max_length=50, blank=True, default='')
     season = models.CharField(max_length=50, blank=True, default='')
     crop = models.CharField(max_length=50, blank=True, default='')
