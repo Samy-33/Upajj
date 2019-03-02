@@ -11,13 +11,13 @@ import json
 import requests
 from bs4 import BeautifulSoup
 from .models import BotContext
+from upaj.settings import logging as logger
 
 # from sklearn.tree import
 
 DATA_GOV_API = '579b464db66ec23bdd000001f4159aa056f849bb6c7922a7a5c2cc99'
 
 conversation = watson_developer_cloud.ConversationV1(
-
     username='6c3fe2ff-40bd-4cc4-968a-a2d5f282e5ec',
     password='hWIJrde0H551',
     version='2018-03-08'
@@ -59,25 +59,41 @@ def get_response(chat):
     response = conversation.message(workspace_id=workspace_id, input={'text': chat})
     return response
 
+def valid_location(location):
+    if location is None or location == '':
+        return False
+    return True
+
 def chatDriver(query,location=None,user=None):
-    if user in not None:
+    if user is not None:
         ctx = BotContext.get_context_from_session(user)
+        logger.debug(ctx)
         # Getting Context
-        if ctx is "#new_location_weather":
+        if ctx == "#new_location_weather":
             BotContext.set_context_from_session(user,"")
-            query += "Weather for"
-        if ctx is "#flow_crop_prediction_location":
+            query = "what is the Weather for " + query
+        if ctx == "#flow_crop_prediction_location":
             BotContext.set_context_from_session(user,"")
-            
+        if ctx == "#minimum_support_price":
+            BotContext.set_context_from_session(user,"")
+            query = "What is minimum price for " + query
+    
     intents = []
     entities = []
 
     try:
         watson_replies = get_response(query)
         response = watson_replies.result
-        pprint(response)
+        # pprint(response)
     except:
-        return response_encoder('Sorry! Not available right now.')
+        return_data = {}
+        return_data["text"] = 'Sorry! Not available right now.'
+        return_data["options"] = []
+        return return_data
+
+    logger.debug("response : ")
+    logger.debug(response)
+    #logger.debug(entities)
 
     for intent in response['intents']:
         intents.append(intent['intent'])
@@ -91,11 +107,8 @@ def chatDriver(query,location=None,user=None):
     if 'weather' in intents:
         return location_suggestions(entities,location)
 
-    if 'crop_forecasting' in intents:
-        return crop_forecasting(entities,location)
-
     if 'cost' in intents:
-        return minimum_support_price_prediction(response)
+        return minimum_support_price_prediction(response,user=user)
 
     if 'pesticide' in intents:
         return pesticide(entities)
@@ -112,7 +125,25 @@ def chatDriver(query,location=None,user=None):
     if 'customer_support' in intents:
         return customer_support()
 
-    return rephrase(response)
+    # check for any flow that exists.
+    #try:
+    location = entities[0]['value']
+    logger.debug("location")
+    logger.debug(location)
+    logger.debug(ctx)
+    if valid_location(location) and ctx == "#flow_crop_prediction_location":
+        logger.debug("oh yeah")
+        BotContext.set_location_context_from_session(user,location,"#flow_crop_prediction_season")
+        return crop_forecasting_season()
+    #except:
+    #    pass
+
+    if 'crop_forecasting' in intents:
+        return crop_forecasting(entities,location)
+
+    data_return = {}
+    data_return["text"] = response
+    return data_return
 
 # Functions are defined below
 
@@ -168,7 +199,7 @@ def greeting_flow():
     flows = []
     flows.append({"key":"#flow_weather","value": "Weather"})
     flows.append({"key":"#flow_crop_prediction","value": "Crop Prediction"})
-    flows.append({"key":"#flow_cost","value": "Mininum Support Price"})
+    flows.append({"key":"#flow_cost","value": "Minimum Support Price"})
     flows.append({"key":"#flow_pesticide","value": "Pesticide"})
     flows.append({"key":"#flow_cultivation","value": "Cultivation"})
     flows.append({"key":"#flow_support","value": "Customer Support"})
@@ -179,52 +210,104 @@ def ask_location():
     data["text"] = "Please enter location ?"
     return data
 
-def flow_weather(loaction,user):
+def flow_weather(location,user):
     if location is None:
         location = BotContext.get_location_from_session(user)
         if location is None:
             return ask_location()
+    BotContext.set_location_from_session(user,location)
     return location_suggestions(None,city=location)
 
 def crop_forecasting_season():
     data = {}
     data["text"] = "Please choose one of the given season ?"
     data["options"] = [{"key":"#crop_forcasting_rabi","value":"Rabi"},{"key":"#crop_forcasting_kharif","value":"Kharif"},{"key":"#crop_forcasting_autumn","value":"Autumn"},{"key":"#crop_forcasting_wholeyear","value":"Whole Year"}] 
+    return data
 
 def ChatDriverFlow(query,location=None,user=None):
-    if query is "#flow_weather":
-        data = flow_weather(loaction,user)
-        data["options"] = [{"key":"#new_location_weather","value":"Yes"},{"key":"#clear","value":"No"}]
+    if query == "#flow_weather":
+        data = flow_weather(location,user)
+        data["options"] = [{"key":"#new_location_weather","value":"For some other location ?"},{"key":"#clear","value":"No"}]
         return data
-    if query is "#new_location_weather":
+    if query == "#new_location_weather":
         BotContext.set_context_from_session(user,"#new_location_weather")
         return ask_location()
-    if query is "#clear":
+    if query == "#clear":
         BotContext.set_context_from_session(user,"")
         data = {}
         data["text"] = "Anything else I can help you with ?"
         data["options"] = greeting_flow()
         return data
 
-    if query is "#flow_crop_prediction":
+    if query == "#flow_crop_prediction":
         location = BotContext.get_location_from_session(user)
-        if location is not None or location is not "":
+        if valid_location(location):
             data = {}
-            data["text"] = "Do you want it for this " + location + " ?"
-            data["options"] = [{"key":"#flow_crop_prediction_location_yes","value":"Yes"},{"key":"#flow_crop_prediction_location_no","value":"No"}]
+            data["text"] = "Do you want Crop prediction for " + location + " ?"
+            data["options"] = [{"key":"#flow_crop_prediction_location_yes","value":"Yes for " + str(location)},{"key":"#flow_crop_prediction_location_no","value":"No"}]
             return data
         else:
             BotContext.set_context_from_session(user,"#flow_crop_prediction_location")
             return ask_location()
 
-    if query is "#flow_crop_prediction_location_no":
+    if query == "#flow_crop_prediction_location_no":
+        BotContext.set_context_from_session(user,"#flow_crop_prediction_location")
+        return ask_location()
+
+    if query == "#flow_crop_prediction_location_yes":
         return crop_forecasting_season()
 
-    if query is "#flow_crop_prediction_location_yes":
-        return 
+    if query == "#crop_forcasting_rabi":
+        location = BotContext.get_location_from_session(user)
+        if valid_location(location):
+            return crop_forecasting_v2(user,location.lower(),"rabi")
+        else:
+            return chatDriver("#flow_crop_prediction",None,user=user)
+    if query == "#crop_forcasting_kharif":
+        location = BotContext.get_location_from_session(user)
+        if valid_location(location):
+            return crop_forecasting_v2(user,location.lower(),"kharif")
+        else:
+            return chatDriver("#flow_crop_prediction",None,user=user)
+
+    if query == "#crop_forcasting_autumn":
+        location = BotContext.get_location_from_session(user)
+        if valid_location(location):
+            return crop_forecasting_v2(user,location,"autumn")
+        else:
+            return chatDriver("#flow_crop_prediction",None,user=user)
+
+    if query == "#crop_forcasting_wholeyear":
+        location = BotContext.get_location_from_session(user)
+        if valid_location(location):
+            return crop_forecasting_v2(user,location,"whole year")
+        else:
+            return chatDriver("#flow_crop_prediction",None,user=user)
+
+    if query == "#flow_cost":
+        crop = BotContext.get_crop_from_session(user)
+        data_return = {}
+        if not (crop is None or crop == ''):
+            data_return["text"] = "Do you want the Minimum support Price for crop " + crop + " ?"
+            data_return["options"] = [{"key":"#msp_yes","value":"Yes"},{"key":"#msp_no_ask_crop","value":"No"}]
+            return data_return
+        else:
+            data_return["text"] = "Please Tell me the crop name for which Minimumm price is required."
+            data_return["options"] = []
+            return data_return
+
+    if query == "#msp_yes":
+        crop = BotContext.get_crop_from_session(user)
+        return minimum_support_price_prediction(None,crop)
+
+    if query == "#msp_no_ask_crop":
+        BotContext.set_context_from_session(user,"#minimum_support_price")
+        data_return = {}
+        data_return["text"] = "Please tell me the crop name for which Minimum Price is required."
+        data_return["options"] = []
+        return data_return
 
 def weather(location_id):
-
     ''' returns weather conditions for a given location id '''
     weather_data = pywapi.get_weather_from_weather_com(location_id)
     print(weather_data)
@@ -255,14 +338,14 @@ def location_suggestions(entities,city=None):
         temp = data["main"]["temp"]
         humidity = data["main"]["humidity"]
         discription = data["weather"][0]["description"]
-        response_text = "The current temperature is " + str(temp) + "C and humidity is " + str(humidity) + "% " + "expecting a " + discription
+        response_text = "The current temperature for " + str(location) +" is " + str(temp) + "C and humidity is " + str(humidity) + "% " + "expecting a " + discription
         if ("clear sky" in discription.lower()):
             response_text += " No worries."
         elif ("clouds" in discription.lower()):
             response_text += ". Overcast might be there, take care for your crop."
         # print(response_text)
         data_return["text"] = response_text
-        return response_text
+        return data_return
     except:
         data_return["text"] = "Sorry! Couldn't find for your location"
         return data_return
@@ -297,14 +380,21 @@ def pesticide(entities):
     except:
         return response_encoder("No data for the specified disease! Please try after some time.")
 
-def minimum_support_price_prediction(response):
+def minimum_support_price_prediction(response,crop_name=None,user=None):
 
     ''' provides a predicted minimum support price '''
 
-    try:
-        crop = response['entities'][0]['value']
-    except:
-        return response_encoder("Could not find crop name. Please specify the proper crop name alongside the query.")
+    if crop_name is None:
+        try:
+            crop = response['entities'][0]['value']
+            BotContext.set_crop_from_session(user,crop)
+        except:
+            return_data = {}
+            return_data["text"] = "Could not find crop name. Please specify the proper crop name alongside the query."
+            return_data["options"] = []
+            return return_data
+    else:
+        crop = crop_name
 
     dataframe = pd.read_csv('csv_files/crops.csv')
     msp_cost = -1
@@ -340,27 +430,16 @@ def minimum_support_price_prediction(response):
             output = str('The minimum selling price of ' + crop + ' is expected to be \u20B9' +str(predicition.round()))
     except:
         output = str('Sorry! no prediction available')
-    return response_encoder(output)
+    return_data = {}
+    return_data["text"] = output
+    return_data["options"] = []
+    return return_data
 
-def crop_forecasting(entities,loc):
-    data = pd.read_csv('csv_files/crop_production.csv')
+def crop_forecasting_v2(user,location,season):
     now = datetime.datetime.now()
-    try:
-        location = entities[0]['value']
-    except:
-        location = loc
-        # return response_encoder("Please specify place alongside the query.")
-    if(now.month >= 7 and now.month <= 10):
-        season = 'kharif'
-    elif(now.month >= 10 and now.month <= 11):
-        season = 'autumn'
-    elif((now.month >= 11 and now.month <= 12) or now.month <= 1):
-        season = 'rabi'
-    else:
-        season = 'whole year'
-    
+    data = pd.read_csv('csv_files/crop_production.csv')
     data = data.values
-    output2 = []
+    output2 = ""
     
     if(True):
         # print (str(season).lower() + " " + str(location).lower())
@@ -388,40 +467,69 @@ def crop_forecasting(entities,loc):
         predicted_crop = []
         # print ("Crop :",end=' ')
         # print (Crop)
+        # logger.debug(Crop)
         for crop in Crop:
             Production = []
             Year = []
             Production = Crop[crop][0]
             Year = Crop[crop][1]    
-            try:
+            # try:
             # print (Year,Production)
-                if(len(Production) > 1):
-                    [b0,b1] = simple_linear_regression(Year,Production)
-
-                    current_year = now.year
-                    predicition = current_year*b1+b0
-                    if(float(predicition) == 0):
-                        continue
-                    predicted_crop.append((predicition,crop))
-            except:
-                continue
+            if len(Production) > 1:
+                [b0,b1] = simple_linear_regression(Year,Production)
+                current_year = now.year
+                predicition = current_year*b1+b0
+                if(float(predicition) == 0):
+                    continue
+                predicted_crop.append((predicition,crop))
+            # except:
+            #    continue
             # output1 += str(i + " " + str(predicition) + " ")
             #print (i + " " +str(predicition))
+        # logger.debug(predicted_crop)
         predicted_crop.sort(reverse=True)
         cnt = 2
+        index = 1
         # top five crops for production
         for i in range(len(predicted_crop)):
             cnt+=1
             if(cnt > 5):
                 break
             if(predicted_crop[i][0] > 0):
-                output2.append(predicted_crop[i][1] + " " + str(predicted_crop[i][0]) + " metric tonne/hectare")
-                
+                index+=1
+                output2 += str(index) + " " +predicted_crop[i][1] + " " + str(predicted_crop[i][0]) + " metric tonne/hectare \n"
+
+    data_return = {}
+    data_return["options"] = []            
     if (len(output2) == 0):
-        return response_encoder("Not data found for the region, please add your city while doing crop prediction")
+        data_return = {}
+        data_return["text"] = "Not data found for the region"
     else:
-        output2.insert(0,"List of possible crop which can be grown with there approximate production this season ")
-        return (response_encoder(output2))
+        output2 = "List of possible crop which can be grown with there approximate production this season \n" + output2
+        data_return["text"] = output2
+    
+    return data_return
+
+def crop_forecasting(entities,loc,user=None):
+    now = datetime.datetime.now()
+    try:
+        location = entities[0]['value']
+    except:
+        location = loc
+        # return response_encoder("Please specify place alongside the query.")
+    if(now.month >= 7 and now.month <= 10):
+        season = 'kharif'
+    elif(now.month >= 10 and now.month <= 11):
+        season = 'autumn'
+    elif((now.month >= 11 and now.month <= 12) or now.month <= 1):
+        season = 'rabi'
+    else:
+        season = 'whole year'
+
+    if valid_location(location):
+        return crop_forecasting_v2(user,location,season)
+
+    return ChatDriverFlow(query="#flow_crop_prediction",location=None,user=user)
 
 def response_encoder(response):
 

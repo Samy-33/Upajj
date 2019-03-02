@@ -10,7 +10,7 @@ const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   withCredentials: true
 };
-const CHAT_URL = "http://192.168.1.85:8000/bot/chat/";
+const CHAT_URL = "http://localhost:8000/bot/chat/";
 
 @Component({
   selector: 'app-root',
@@ -19,6 +19,7 @@ const CHAT_URL = "http://192.168.1.85:8000/bot/chat/";
 })
 export class AppComponent implements OnInit, AfterContentChecked {
   title = 'Upaj';
+  last_request = undefined;
   @ViewChild(NgxAutoScroll) ngxAutoScroll: NgxAutoScroll;
   all_lang = [
     {
@@ -56,12 +57,12 @@ export class AppComponent implements OnInit, AfterContentChecked {
     this.scrollToView();
     this.bot_thinking = true;
     this.current_query = new Query();
-    this.http.post<BotResponse>(CHAT_URL, query, httpOptions).subscribe((res) => {
+    this.last_request = this.http.post<BotResponse>(CHAT_URL, query, httpOptions).subscribe((res) => {
       this.bot_thinking = false;
       // console.log(res);
       this.push_conv(false, res.text);
       this.key = res.key;
-      this.current_options = res.options || new Array<Option>();
+      this.current_options = res.options ? res.options: new Array<Option>();
     }, () => {
       this.bot_thinking = false;
       this.push_conv(false, "Drat! We ran into an error we didn't expect. Try again maybe!");
