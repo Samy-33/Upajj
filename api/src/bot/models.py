@@ -26,9 +26,9 @@ class BotContext(models.Model):
         return bot_context
 
     @staticmethod
-    def get_context_from_session(session_key):
-    	bot_context = BotContext.get_bot_context_from_session(session_key)
-    	return bot_context.context
+    def get_context_from_session(session):
+        bot_context = BotContext.get_bot_context_from_session(session)
+        return bot_context.context
 
     @staticmethod
     def set_context_from_session(session,ctx):
@@ -38,10 +38,23 @@ class BotContext(models.Model):
 
     @staticmethod
     def get_location_from_session(session):
-    	location = BotContext.objects.get(session=session).location
-    	return location
+        location = BotContext.objects.get(session=session).location
+        return location
+
+    @staticmethod
+    def set_location_from_session(session,location):
+        bot_context = BotContext.objects.get(session=session)
+        bot_context.location = location
+        bot_context.save()
 
     @staticmethod
     def get_season_from_session(session):
-   		season = BotContext.objects.get_or_create(session=session).season
-   		return season
+        season = BotContext.objects.get_or_create(session=session).season
+        return season
+
+    @staticmethod
+    def set_location_context_from_session(session,location,context):
+        bot_context = BotContext.objects.get(session=session)
+        bot_context.location = location
+        bot_context.context = context
+        bot_context.save()
