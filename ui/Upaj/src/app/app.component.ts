@@ -9,7 +9,7 @@ const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   withCredentials: true
 };
-const CHAT_URL = "http://192.168.1.85:8000/bot/chat/";
+const CHAT_URL = "http://localhost:8000/bot/chat/";
 
 @Component({
   selector: 'app-root',

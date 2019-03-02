@@ -60,7 +60,7 @@ def get_response(chat):
     return response
 
 def chatDriver(query,location=None,user=None):
-    if user in not None:
+    if user is not None:
         ctx = BotContext.get_context_from_session(user)
         # Getting Context
         if ctx is "#new_location_weather":
