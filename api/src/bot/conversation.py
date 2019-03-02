@@ -39,8 +39,6 @@ def variance(values, xmean):
 
 # Calculate coefficients
 def coefficients(X,Y):
-	x = X
-	y = Y
 	x_mean, y_mean = mean(X), mean(Y)
 	b1 = covariance(X, x_mean, Y, y_mean) / variance(X, x_mean)
 	b0 = y_mean - b1 * x_mean
