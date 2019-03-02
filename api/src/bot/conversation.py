@@ -66,7 +66,9 @@ def chatDriver(query,location=None,user=None):
         if ctx is "#new_location_weather":
             BotContext.set_context_from_session(user,"")
             query += "Weather for"
-
+        if ctx is "#flow_crop_prediction_location":
+            BotContext.set_context_from_session(user,"")
+            
     intents = []
     entities = []
 
@@ -184,6 +186,10 @@ def flow_weather(loaction,user):
             return ask_location()
     return location_suggestions(None,city=location)
 
+def crop_forecasting_season():
+    data = {}
+    data["text"] = "Please choose one of the given season ?"
+    data["options"] = [{"key":"#crop_forcasting_rabi","value":"Rabi"},{"key":"#crop_forcasting_kharif","value":"Kharif"},{"key":"#crop_forcasting_autumn","value":"Autumn"},{"key":"#crop_forcasting_wholeyear","value":"Whole Year"}] 
 
 def ChatDriverFlow(query,location=None,user=None):
     if query is "#flow_weather":
@@ -208,13 +214,13 @@ def ChatDriverFlow(query,location=None,user=None):
             data["options"] = [{"key":"#flow_crop_prediction_location_yes","value":"Yes"},{"key":"#flow_crop_prediction_location_no","value":"No"}]
             return data
         else:
+            BotContext.set_context_from_session(user,"#flow_crop_prediction_location")
             return ask_location()
 
     if query is "#flow_crop_prediction_location_no":
-        return ""
+        return crop_forecasting_season()
 
     if query is "#flow_crop_prediction_location_yes":
-        
         return 
 
 def weather(location_id):

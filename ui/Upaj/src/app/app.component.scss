@@ -128,7 +128,8 @@ Mixins
   .messages {
     flex: 1 1 auto;
     color: rgba(255, 255, 255, .5);
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll; 
     position: relative;
     width: 100%;
     
@@ -146,11 +147,12 @@ Mixins
       float: left;
       padding: 6px 10px 7px;
       border-radius: 10px 10px 10px 0;
-      background: rgba(0, 0, 0, .3);
+      background: rgba(255, 255, 255, .2);
       margin: 8px 0;
       font-size: 11px;
       line-height: 1.4;
       margin-left: 35px;
+      margin-right: 10px;
       position: relative;
       text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
       
@@ -191,7 +193,6 @@ Mixins
       
       &.message-personal {
         float: right;
-        margin-right: 10px;
         color: #fff;
         text-align: right;
         background: linear-gradient(120deg, #d13eea, #257287);
@@ -293,9 +294,27 @@ Mixins
       transition: background .2s ease;
       
       &:hover {
-        background: #1D7745;
+        background: #d13eea;
       }
     }
+  }
+  .option-button {
+    z-index: 1;
+    color: #d13eea;
+    border: 2px solid #d13eea;
+    background: rgba(0, 0, 0, 0);
+    line-height: 1;
+    margin: 5px 10px;
+    cursor: pointer;
+    padding: 6px 10px; 
+    border-radius: 10px;
+    outline: none!important;
+    transition: background .2s ease;
+
+        
+    &:hover {
+        background: rgba(155, 0, 129, 0.3);
+      }
   }
   
   
