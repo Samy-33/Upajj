@@ -11,6 +11,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 from .models import BotContext
+from upaj.settings import logging as logger
 
 # from sklearn.tree import
 
@@ -62,11 +63,12 @@ def get_response(chat):
 def chatDriver(query,location=None,user=None):
     if user is not None:
         ctx = BotContext.get_context_from_session(user)
+        logger.debug(ctx)
         # Getting Context
-        if ctx is "#new_location_weather":
+        if ctx == "#new_location_weather":
             BotContext.set_context_from_session(user,"")
-            query = "Weather for" + query
-        if ctx is "#flow_crop_prediction_location":
+            query = "what is the Weather for " + query
+        if ctx == "#flow_crop_prediction_location":
             BotContext.set_context_from_session(user,"")
     
     intents = []
@@ -255,7 +257,7 @@ def location_suggestions(entities,city=None):
         temp = data["main"]["temp"]
         humidity = data["main"]["humidity"]
         discription = data["weather"][0]["description"]
-        response_text = "The current temperature for " + str(location) +" is" + str(temp) + "C and humidity is " + str(humidity) + "% " + "expecting a " + discription
+        response_text = "The current temperature for " + str(location) +" is " + str(temp) + "C and humidity is " + str(humidity) + "% " + "expecting a " + discription
         if ("clear sky" in discription.lower()):
             response_text += " No worries."
         elif ("clouds" in discription.lower()):
