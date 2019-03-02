@@ -3,4 +3,5 @@ export class Query {
     location: string;
     option: string;
     key: string;
+    lang: string;
 }
