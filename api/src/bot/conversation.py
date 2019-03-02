@@ -64,19 +64,39 @@ def valid_location(location):
         return False
     return True
 
+def smalltalk(query):
+    init_talks = ["Hi","Hello","Hey"]
+    if query in init_talks:
+        return True
+    return False
+
+def helptalk(query):
+    init_talks = ["help","help me","can you help me","help","reset"]
+    if query in init_talks:
+        return True
+    return False
+
 def chatDriver(query,location=None,user=None):
-    if user is not None:
+    if smalltalk(query) or helptalk(query):
+        BotContext.set_context_from_session(user,"") 
+    elif user is not None:
         ctx = BotContext.get_context_from_session(user)
         logger.debug(ctx)
         # Getting Context
         if ctx == "#new_location_weather":
             BotContext.set_context_from_session(user,"")
             query = "what is the Weather for " + query
-        if ctx == "#flow_crop_prediction_location":
+        elif ctx == "#flow_crop_prediction_location":
             BotContext.set_context_from_session(user,"")
-        if ctx == "#minimum_support_price":
+        elif ctx == "#minimum_support_price":
             BotContext.set_context_from_session(user,"")
             query = "What is minimum price for " + query
+        elif ctx == "#pesticide":
+            BotContext.set_context_from_session(user,"")
+            query = "Pesticide for " + query
+        elif ctx == "#cultivation":
+            BotContext.set_context_from_session(user,"")
+            query = "Cultivation techniques for " + query
     
     intents = []
     entities = []
@@ -148,12 +168,16 @@ def chatDriver(query,location=None,user=None):
 # Functions are defined below
 
 def customer_support():
-    customer = "You can call up Kisan Call Center (KCC) through a toll free number 1800-180-1551 for more information"
-    return response_encoder(customer)
+    customer = {}
+    customer["text"] = "You can call up Kisan Call Center (KCC) through a toll free number 1800-180-1551 for more information"
+    customer["options"] = []
+    return customer
 
 def helpme():
-    help_text = "I can help you with crop forcasting, pesticide suggestion, fertilizers, weather reports, suggestions to best practice for crop cultivation and much more."
-    return response_encoder(help_text)
+    help_text = {}
+    help_text["text"] = "I can help you with crop forcasting, pesticide suggestion, fertilizers, weather reports, suggestions to best practice for crop cultivation and much more."
+    help_text["options"] = []
+    return help_text
 
 def bye():
     return response_encoder("It was a pleasure to help you.")
@@ -178,7 +202,10 @@ def cultivation(response):
 
     hyperlink_format = '<a href="{link}" target="{target}">{text}</a>'
     hyperlink_format = hyperlink_format.format(link=video_link, text='click here', target="_blank")
-    return response_encoder("You may visit this link for information about '" + search + "\n" + hyperlink_format)
+    return_data = {}
+    return_data["text"] = hyperlink_format
+    return_data["options"] = []
+    return return_data
 
 def rephrase(response):
 
@@ -307,6 +334,25 @@ def ChatDriverFlow(query,location=None,user=None):
         data_return["options"] = []
         return data_return
 
+    if query == "#flow_pesticide":
+        data_return = {}
+        data_return["text"] = "Please tell me the name Disesase for which you need suggestions of pesticide to be used."
+        data_return["options"] = []
+        BotContext.set_context_from_session(user,"#pesticide")
+        return data_return
+
+    if query == "#flow_cultivation":
+        data_return = {}
+        data_return["text"] = "Some of the suggestions required for growing crops ?"
+        data_return["options"] = []
+        BotContext.set_context_from_session(user,"#cultivation")
+        return data_return
+
+    if query == "#flow_support":
+        return customer_support()
+
+    return helpme()
+
 def weather(location_id):
     ''' returns weather conditions for a given location id '''
     weather_data = pywapi.get_weather_from_weather_com(location_id)
@@ -366,19 +412,26 @@ def pesticide(entities):
     ''' returns pesticide information '''
     no_query = 'I can help you with the pesticide for beetle, insect, blight, grasshopper and many more. For ex : best pesiticide for beetle, insect, blight.'
     if len(entities) == 0 or 'values' in entities[0]:
-        return response_encoder(no_query)
+        return_data = {}
+        return_data["text"] = no_query
+        return_data["options"] = []
+        return return_data
+
     value = entities[0]['value']
     pesticide = pd.read_csv('csv_files/pesticides.csv')
     try:
         var = {}
         ad = "Shukla Agri Traders, Jabalpur market."
         data = pesticide.loc[pesticide['disease'] == value]
-        var["pesticide"] = data.iloc[0]['pesticide']
-        var["SuggestedSellers"] = ad
-        print (var)
-        return response_encoder(var)
+        var["text"] = "user this pesticide "  + data.iloc[0]['pesticide']
+        var["text"] += " which you can purchase from " + ad
+        var["options"] = []
+        return var
     except:
-        return response_encoder("No data for the specified disease! Please try after some time.")
+        data_return = {}
+        data_return["text"] = "No data for the specified disease! Please try after some time."
+        data_return["options"] = []
+        return data_return
 
 def minimum_support_price_prediction(response,crop_name=None,user=None):
 

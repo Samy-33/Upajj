@@ -59,5 +59,13 @@ FLOW_KEY_TRANSLATION_MAP = {
     '#flow_crop_prediction_location_no': {
         'hi': 'नहीं',
         'en': 'No'
+    },
+    '#msp_yes':{
+        'hi': 'हाँ',
+        'en': 'Yes' 
+    },
+    '#msp_no_ask_crop':{
+        'hi': 'नहीं',
+        'en': 'No'    
     }
 }
