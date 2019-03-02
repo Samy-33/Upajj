@@ -7,14 +7,14 @@
   </div>
   <div class="messages">
     <div class="messages-content">
-      <div *ngFor="let msg of conv_thread" class="message new"><figure *ngIf="!msg.by_user" class="avatar"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg"></figure>Hi there, I'm Fabio and you?<div class="timestamp">1:19</div></div>
-      <div class="message message-personal new">sdasd<div class="timestamp">1:23</div></div>
+      <div *ngFor="let msg of conv_thread" [ngClass]="{'message-personal': msg.by_user}" class="message new"><figure *ngIf="!msg.by_user" class="avatar"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg"></figure>{{ msg.msg }}<div class="timestamp">1:19</div></div>
+      <div *ngIf="bot_thinking" class="message loading new"><figure class="avatar"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" /></figure><span></span></div>
+      <div *ngIf="current_options.length > 0 && !bot_thinking" class="message new"><figure class="avatar"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" /></figure><span><button *ngFor="let opt of current_options" (click)="push_option(opt)" class="option-button">{{ opt.value }}</button></span></div>
     </div>
   </div>
   <div class="message-box">
-    <textarea [(ngModel)]="text" type="text" class="message-input" placeholder="Type message..."></textarea>
-    <button (click)="push_query()" type="submit" class="message-submit">Send</button>
+    <textarea [(ngModel)]="current_query.text" type="text" class="message-input" placeholder="Type message..."></textarea>
+    <button (click)="push_query(current_query)" type="submit" class="message-submit">Send</button>
   </div>
-
 </div>
 <div class="bg"></div>
