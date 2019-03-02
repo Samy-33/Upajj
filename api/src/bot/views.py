@@ -48,6 +48,7 @@ class ChatView(APIView):
             return_data['text'] = ''
 
         new_text = get_valid_text_for_response(return_data['text'], language)
+        # new_options = get_translated_options_for_response(return_data['options'], language)
         new_options = get_translated_options_for_response(return_data['options'], language)
         return_data['text'] = new_text
         return_data['options'] = new_options
@@ -64,7 +65,7 @@ class VoiceChatView(APIView):
 def get_valid_text_for_conversation_api(text, lang):
 
     logger.debug(f'text is: {text} and lang is: {lang}')
-    if text and lang == HINDI_LANGUAGE_CODE:
+    if text and lang != ENGLISH_LANGUAGE_CODE:
         new_text = translator.translate(text, ENGLISH_LANGUAGE_CODE)
         # logger.debug(f'Translated Text for {text} is: {new_text}')
         text = new_text
@@ -72,17 +73,26 @@ def get_valid_text_for_conversation_api(text, lang):
 
 
 def get_valid_text_for_response(text, lang):
-    if lang == HINDI_LANGUAGE_CODE:
-        text = translator.translate(text, HINDI_LANGUAGE_CODE)
+    if lang != ENGLISH_LANGUAGE_CODE:
+        text = translator.translate(text, lang)
     
     return text
 
 def get_translated_options_for_response(options, lang):
-    if lang == HINDI_LANGUAGE_CODE and options:
+    if lang != ENGLISH_LANGUAGE_CODE and options:
         for ind, option in enumerate(options):
             options[ind] = {
                 'key': option['key'],
-                'value': translator.get_option_translation(option['key'], HINDI_LANGUAGE_CODE)
+                'value': translator.get_option_translation(option['key'], lang)
             }
 
+    return options
+
+def get_translated_options_for_response(options, lang):
+    if lang != ENGLISH_LANGUAGE_CODE and options:
+        option_values = list(option['value'] for option in options)
+        translated_values = translator.get_all_option_translations(option_values, lang)
+        for ind, value in enumerate(translated_values):
+            options[ind]['value'] = value
+    
     return options

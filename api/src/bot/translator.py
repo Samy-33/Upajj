@@ -21,4 +21,10 @@ class Translator:
 
         raise Exception(f'Invalid Flow Key: {flow_key} or target_language: {target_language}')
 
+    def get_all_option_translations(self, option_list, target_language):
+        response_list = self.client.translate(option_list, target_language=target_language)
+        logger.debug(f'Translation for {option_list}: {response_list}')
+        translated_options = list(translation['translatedText'] for translation in response_list)
+        return translated_options
+
 translator = Translator()
