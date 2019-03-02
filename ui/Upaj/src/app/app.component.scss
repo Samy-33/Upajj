@@ -37,7 +37,7 @@ Mixins
   }
   
   body {
-    background: linear-gradient(135deg, #044f48, #2a7561);
+    background: #5158ae;
     background-size: cover;
     font-family: 'Open Sans', sans-serif;
     font-size: 18px;
@@ -124,7 +124,7 @@ Mixins
   --------------------*/
   .messages {
     flex: 1 1 auto;
-    color: rgba(255, 255, 255, .5);
+    color: rgba(255, 255, 255, 1);
     overflow-x: hidden;
     overflow-y: scroll; 
     position: relative;
@@ -143,7 +143,7 @@ Mixins
       float: left;
       padding: 6px 10px 7px;
       border-radius: 10px 10px 10px 0;
-      background: rgba(255, 255, 255, .2);
+      background: linear-gradient(120deg, #355c26, #7a9118);//#113b0d
       margin: 8px 0;
       font-size: 18px;
       line-height: 1.4;
@@ -191,7 +191,7 @@ Mixins
         float: right;
         color: #fff;
         text-align: right;
-        background: linear-gradient(120deg, #d13eea, #257287);
+        background: linear-gradient(120deg, #2a7762, #42e28acf);
         border-radius: 10px 10px 0 10px;
         
         &::before {
@@ -261,12 +261,12 @@ Mixins
       border: none;
       outline: none!important;
       resize: none;
-      color: rgba(255, 255, 255, .7);
-      font-size: 14px;
-      height: 17px;
+      color: rgba(255, 255, 255, 1);
+      font-size: 18px;
+      height: 25px;
       margin: 0;
       padding-right: 20px;
-      width: 265px;
+      width: 80%;
     }
     
     textarea:focus:-webkit-placeholder{
@@ -276,36 +276,30 @@ Mixins
     & .message-submit {
       position: absolute;
       z-index: 1;
-      top: 9px;
+      top: 2px;
       right: 10px;
       color: #fff;
       border: none;
-      background: #257287;
+      background: none;
       font-size: 15px;
       text-transform: uppercase;
       line-height: 1;
-      padding: 6px 10px; 
       border-radius: 10px;
       outline: none!important;
       transition: background .2s ease;
-      
-      &:hover {
-        background: #d13eea;
-      }
     }
   }
   .option-button {
     z-index: 1;
-    color: #d13eea;
-    border: 2px solid #d13eea;
+    color: white;
+    border: 2px solid rgba(255,255,255,0.7);
     background: rgba(0, 0, 0, 0);
     line-height: 1;
+    font-size: 15px;
     margin: 5px 10px;
     cursor: pointer;
     padding: 6px 10px; 
     border-radius: 10px;
-    outline: none!important;
-    transition: background .2s ease;
 
         
     &:hover {

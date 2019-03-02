@@ -29,6 +29,38 @@ export class AppComponent implements OnInit, AfterContentChecked {
     {
       name: "Hindi",
       code: "hi"
+    },
+    {
+      name: "Marathi",
+      code: "mr"
+    },
+    {
+      name: "Gujarati",
+      code: "gu"
+    },
+    {
+      name: "Bengali",
+      code: "bn"
+    },
+    {
+      name: "Kannada",
+      code: "kn"
+    },
+    {
+      name: "Malayalam",
+      code: "ml"
+    },
+    {
+      name: "Tamil",
+      code: "ta"
+    },
+    {
+      name: "Telugu",
+      code: "te"
+    },
+    {
+      name: "Urdu",
+      code: "ur"
     }
   ];
   selected_lang = this.all_lang[0].code;
@@ -60,7 +92,12 @@ export class AppComponent implements OnInit, AfterContentChecked {
     this.http.post<BotResponse>(CHAT_URL, query, httpOptions).subscribe((res) => {
       this.bot_thinking = false;
       // console.log(res);
-      this.push_conv(false, res.text);
+      var message = new Message();
+      message.msg = res.text;
+      message.by_user = false;
+      message.list = res.list;
+      message.links = res.links;
+      this.conv_thread.push(message);
       this.key = res.key;
       this.current_options = res.options ? res.options: new Array<Option>();
     }, (error) => {
