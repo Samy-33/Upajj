@@ -41,16 +41,16 @@ class ChatView(APIView):
             	return_data = {}
         return_data['key'] = bot_cotext.session
 
-        if 'option' not in return_data:
-            return_data['option'] = []
+        if 'options' not in return_data:
+            return_data['options'] = []
 
         if 'text' not in return_data:
             return_data['text'] = ''
 
         new_text = get_valid_text_for_response(return_data['text'], language)
-        new_options = get_translated_options_for_response(return_data['option'], language)
+        new_options = get_translated_options_for_response(return_data['options'], language)
         return_data['text'] = new_text
-        return_data['option'] = new_options
+        return_data['options'] = new_options
     
         return Response(return_data)
 
