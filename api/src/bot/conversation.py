@@ -10,7 +10,7 @@ import pandas as pd
 import json
 import requests
 from bs4 import BeautifulSoup
-from .models import BotContext
+from .models import BotContext, CropForcasting
 from upaj.settings import logging as logger
 
 # from sklearn.tree import
@@ -491,6 +491,17 @@ def minimum_support_price_prediction(response,crop_name=None,user=None):
     return return_data
 
 def crop_forecasting_v2(user,location,season):
+    crop_forcastdb = CropForcasting.get_crop(location,season)
+    if crop_forcastdb:
+        crop = crop_forcastdb[0].crop
+        crops = crop.split(",")
+        output2 = []
+        output2.append("List of possible crop which can be grown with there approximate production this season \n")
+        for crp in crops:
+            output2.append(crp)
+        return_data["list"] = output2
+        return_data = clear_flow(return_data)
+        return return_data
     now = datetime.datetime.now()
     data = pd.read_csv('csv_files/crop_production.csv')
     data = data.values
@@ -551,14 +562,15 @@ def crop_forecasting_v2(user,location,season):
             if(cnt > 5):
                 break
             if(predicted_crop[i][0] > 0):
-                index+=1
                 output2.append(str(index) + " " +predicted_crop[i][1] + " " + str(predicted_crop[i][0]) + " metric tonne/hectare \n")
+                index+=1
 
     data_return = {}
     if (len(output2) == 0):
         data_return = {}
         data_return["text"] = "Not data found for the region"
     else:
+        CropForcasting.set_crop(location.lower(),season.lower(),",".join(output2))
         output2.insert(0,"List of possible crop which can be grown with there approximate production this season \n")
         data_return["list"] = output2
 
