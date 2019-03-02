@@ -3,7 +3,7 @@
 We are using Machine Learning and NLP for predicting the best Crops to be cultivated based on the land type, weather, Minimum Support Price. 
 We are providing a chat interface for providing all the information.
 
-### Main Features of the Chat
+### Main Features of Chat
 
 - Predict the most profitable crop(s) for a specific location and season keeping into the account the land type, the weather conditions, etc.
 - Provide the location wise current weather information.
