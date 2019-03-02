@@ -153,7 +153,7 @@ def greeting(response):
     ''' returns greetings messages'''
     data = {}
     data["text"] = response['output']['text'][0] + '\n' + 'I can help you with crop forcasting, pesticide suggestion, fertilizers, weather reports, suggestions to best practice for crop cultivation and much more.'
-    data["options"] = flows
+    data["options"] = greeting_flow()
     return data
 
 # flows defined for the greetings
