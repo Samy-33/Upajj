@@ -1,3 +1,14 @@
 from django.db import models
 
-# Create your models here.
+
+class BotContext(models.Model):
+    session = models.CharField(max_length=50, unique=True)
+    location = models.CharField(max_length=50, blank=True, default='')
+    season = models.CharField(max_length=50, blank=True, default='')
+    crop = models.CharField(max_length=50, blank=True, default='')
+    context = models.TextField(max_length=1000, null=True)
+
+    @staticmethod
+    def get_context_from_session(session):
+        context = BotContext.objects.get_or_create(session=session)
+        return context
