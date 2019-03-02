@@ -30,7 +30,7 @@ class ChatView(APIView):
 
         text = get_valid_text_for_conversation_api(text, language)
 
-        if text:
+        if not option:
             return_data = chatDriver(
                 text, location=location, user=bot_cotext.session)
         else:

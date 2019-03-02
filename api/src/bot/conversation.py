@@ -163,6 +163,7 @@ def chatDriver(query,location=None,user=None):
 
     data_return = {}
     data_return["text"] = response
+    data_return = clear_flow(data_return)
     return data_return
 
 # Functions are defined below
@@ -183,7 +184,6 @@ def bye():
     return response_encoder("It was a pleasure to help you.")
 
 def cultivation(response):
-
     search = response['input']['text']
     base = "https://www.youtube.com/results?search_query="
 
@@ -191,20 +191,18 @@ def cultivation(response):
     soup = BeautifulSoup(r.text,'html.parser')
     vids = soup.findAll('a',attrs={'class':'yt-uix-tile-link'})
 
-    video_link = ""
+    video_link = []
     count = 0
     for v in vids:
-        count = 1
         temp = 'https://www.youtube.com' + v['href']
-        video_link = temp
-        if(count > 0):
+        video_link.append(temp)
+        if(count >= 3):
             break
+        count+=1
 
-    hyperlink_format = '<a href="{link}" target="{target}">{text}</a>'
-    hyperlink_format = hyperlink_format.format(link=video_link, text='click here', target="_blank")
     return_data = {}
-    return_data["text"] = hyperlink_format
-    return_data["options"] = []
+    return_data["link"] = video_link
+    return_data = clear_flow(return_data)
     return return_data
 
 def rephrase(response):
@@ -244,6 +242,10 @@ def flow_weather(location,user):
             return ask_location()
     BotContext.set_location_from_session(user,location)
     return location_suggestions(None,city=location)
+
+def clear_flow(return_data):
+    return_data["options"] = [{"key":"#clear","value":"Anything else I can help you with ?"}]
+    return return_data
 
 def crop_forecasting_season():
     data = {}
@@ -410,7 +412,7 @@ def location_suggestions(entities,city=None):
 def pesticide(entities):
 
     ''' returns pesticide information '''
-    no_query = 'I can help you with the pesticide for beetle, insect, blight, grasshopper and many more. For ex : best pesiticide for beetle, insect, blight.'
+    no_query = 'I can help you with the pesticide for beetle, insect, blight, grasshopper and many more. For ex : best pesiticide for beetle, insect, blight etc'
     if len(entities) == 0 or 'values' in entities[0]:
         return_data = {}
         return_data["text"] = no_query
@@ -425,12 +427,12 @@ def pesticide(entities):
         data = pesticide.loc[pesticide['disease'] == value]
         var["text"] = "user this pesticide "  + data.iloc[0]['pesticide']
         var["text"] += " which you can purchase from " + ad
-        var["options"] = []
+        var = clear_flow(var)
         return var
     except:
         data_return = {}
         data_return["text"] = "No data for the specified disease! Please try after some time."
-        data_return["options"] = []
+        data_return = clear_flow(data_return)
         return data_return
 
 def minimum_support_price_prediction(response,crop_name=None,user=None):
@@ -444,7 +446,7 @@ def minimum_support_price_prediction(response,crop_name=None,user=None):
         except:
             return_data = {}
             return_data["text"] = "Could not find crop name. Please specify the proper crop name alongside the query."
-            return_data["options"] = []
+            return_data = clear_flow(return_data)
             return return_data
     else:
         crop = crop_name
@@ -485,7 +487,7 @@ def minimum_support_price_prediction(response,crop_name=None,user=None):
         output = str('Sorry! no prediction available')
     return_data = {}
     return_data["text"] = output
-    return_data["options"] = []
+    return_data = clear_flow(return_data)
     return return_data
 
 def crop_forecasting_v2(user,location,season):
@@ -553,14 +555,14 @@ def crop_forecasting_v2(user,location,season):
                 output2 += str(index) + " " +predicted_crop[i][1] + " " + str(predicted_crop[i][0]) + " metric tonne/hectare \n"
 
     data_return = {}
-    data_return["options"] = []            
     if (len(output2) == 0):
         data_return = {}
         data_return["text"] = "Not data found for the region"
     else:
         output2 = "List of possible crop which can be grown with there approximate production this season \n" + output2
         data_return["text"] = output2
-    
+
+    data_return = clear_flow(data_return)
     return data_return
 
 def crop_forecasting(entities,loc,user=None):
