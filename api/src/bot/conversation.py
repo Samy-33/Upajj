@@ -197,7 +197,7 @@ def greeting_flow():
     flows = []
     flows.append({"key":"#flow_weather","value": "Weather"})
     flows.append({"key":"#flow_crop_prediction","value": "Crop Prediction"})
-    flows.append({"key":"#flow_cost","value": "Mininum Support Price"})
+    flows.append({"key":"#flow_cost","value": "Minimum Support Price"})
     flows.append({"key":"#flow_pesticide","value": "Pesticide"})
     flows.append({"key":"#flow_cultivation","value": "Cultivation"})
     flows.append({"key":"#flow_support","value": "Customer Support"})
