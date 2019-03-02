@@ -22,7 +22,7 @@
   </div>
   <div class="message-box">
     <textarea [(ngModel)]="current_query.text" type="text" class="message-input" placeholder="Type message..."></textarea>
-    <button (click)="push_query(current_query)" type="submit" class="message-submit">Send</button>
+    <button (click)="current_query.text ? push_query(current_query): undefined" type="submit" class="message-submit">Send</button>
   </div>
 </div>
 <div class="bg"></div>
