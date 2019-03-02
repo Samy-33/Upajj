@@ -14,7 +14,7 @@
   </div>
   <div ngx-auto-scroll class="messages">
     <div class="messages-content">
-      <div *ngFor="let msg of conv_thread" [ngClass]="{'message-personal': msg.by_user}" class="message new"><figure *ngIf="!msg.by_user" class="avatar"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg"></figure>{{ msg.msg }}<div class="timestamp">1:19</div></div>
+      <div *ngFor="let msg of conv_thread" [ngClass]="{'message-personal': msg.by_user}" class="message new"><figure *ngIf="!msg.by_user" class="avatar"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg"></figure>{{ msg.msg }}</div>
       <div *ngIf="bot_thinking" class="message loading new"><figure class="avatar"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" /></figure><span></span></div>
       <div *ngIf="current_options.length > 0 && !bot_thinking" class="message new"><figure class="avatar"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" /></figure><span><button *ngFor="let opt of current_options" (click)="push_option(opt)" class="option-button">{{ opt.value }}</button></span></div>
       <div #chat></div>
