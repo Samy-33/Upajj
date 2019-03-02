@@ -37,5 +37,21 @@ source upajj/bin/activate
 ```
 pip install -r requirements.txt
 ```
+5. Migrate the Database using commands:
+```
+python manage.py makemigrations
+python manage.py migrate
+```
+6. Run Django server
+```
+python manage.py runserver
+```
+7. Install npm and its dependencies
+
+8. Start the front-end server using command:
+```
+ng serve
+```
+### Our Application
 
   
