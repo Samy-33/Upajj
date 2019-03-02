@@ -20,7 +20,7 @@ FLOW_KEY_TRANSLATION_MAP = {
         'hi': 'फसल की भविष्यवाणी',
         'en': 'Crop Prediction'
     },
-    'flow_cost': {
+    '#flow_cost': {
         'hi': 'न्यूनतम समर्थन मूल्य',
         'en': 'Minimum Support Price'
     },
