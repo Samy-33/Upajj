@@ -58,3 +58,14 @@ class BotContext(models.Model):
         bot_context.location = location
         bot_context.context = context
         bot_context.save()
+
+    @staticmethod
+    def get_crop_from_session(session):
+        bot_context = BotContext.objects.get(session=session)
+        return bot_context.crop
+
+    @staticmethod
+    def set_crop_from_session(session,crop):
+        bot_context = BotContext.objects.get(session=session)
+        bot_context.crop = crop
+        bot_context.save()

@@ -18,7 +18,6 @@ from upaj.settings import logging as logger
 DATA_GOV_API = '579b464db66ec23bdd000001f4159aa056f849bb6c7922a7a5c2cc99'
 
 conversation = watson_developer_cloud.ConversationV1(
-
     username='6c3fe2ff-40bd-4cc4-968a-a2d5f282e5ec',
     password='hWIJrde0H551',
     version='2018-03-08'
@@ -75,6 +74,9 @@ def chatDriver(query,location=None,user=None):
             query = "what is the Weather for " + query
         if ctx == "#flow_crop_prediction_location":
             BotContext.set_context_from_session(user,"")
+        if ctx == "#minimum_support_price":
+            BotContext.set_context_from_session(user,"")
+            query = "What is minimum price for " + query
     
     intents = []
     entities = []
@@ -282,6 +284,28 @@ def ChatDriverFlow(query,location=None,user=None):
         else:
             return chatDriver("#flow_crop_prediction",None,user=user)
 
+    if query == "#flow_cost":
+        crop = BotContext.get_crop_from_session(user)
+        data_return = {}
+        if crop is None or crop == '':
+            data_return["text"] = "Do you want the Minimum support Price for crop " + crop + " ?"
+            data_return["options"] = [{"key":"#msp_yes","value":"Yes"},{"key":"#msp_no_ask_crop","value":"No"}]
+            return data_return
+        else:
+            data_return["text"] = "Please Tell me the crop name for which Minimumm price is required."
+            data_return["options"] = []
+            return data_return
+
+    if query == "#msp_yes":
+        crop = BotContext.get_crop_from_session(user)
+        return minimum_support_price_prediction(None,crop)
+
+    if query == "#msp_no_ask_crop":
+        BotContext.set_context_from_session(user,"#minimum_support_price")
+        data_return["text"] = "Please tell me the crop name for which Minimum Price is required."
+        data_return["options"] = []
+        return data_return
+
 def weather(location_id):
 
     ''' returns weather conditions for a given location id '''
@@ -356,14 +380,20 @@ def pesticide(entities):
     except:
         return response_encoder("No data for the specified disease! Please try after some time.")
 
-def minimum_support_price_prediction(response):
+def minimum_support_price_prediction(response,crop_name=None):
 
     ''' provides a predicted minimum support price '''
 
-    try:
-        crop = response['entities'][0]['value']
-    except:
-        return response_encoder("Could not find crop name. Please specify the proper crop name alongside the query.")
+    if crop_name is None:
+        try:
+            crop = response['entities'][0]['value']
+        except:
+            return_data = {}
+            return_data["text"] = "Could not find crop name. Please specify the proper crop name alongside the query."
+            return_data["options"] = []
+            return return_data
+    else:
+        crop = crop_name
 
     dataframe = pd.read_csv('csv_files/crops.csv')
     msp_cost = -1
@@ -399,7 +429,10 @@ def minimum_support_price_prediction(response):
             output = str('The minimum selling price of ' + crop + ' is expected to be \u20B9' +str(predicition.round()))
     except:
         output = str('Sorry! no prediction available')
-    return response_encoder(output)
+    return_data = {}
+    return_data["text"] = output
+    return_data["options"] = []
+    return return_data
 
 def crop_forecasting_v2(user,location,season):
     now = datetime.datetime.now()
