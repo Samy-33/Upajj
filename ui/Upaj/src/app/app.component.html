@@ -15,7 +15,7 @@
     <div class="messages-content">
       <div *ngFor="let msg of conv_thread" [ngClass]="{'message-personal': msg.by_user}" class="message new"><figure *ngIf="!msg.by_user" class="avatar"><img src="./assets/avatar_bot.png"></figure>{{ msg.msg }}
         <div *ngFor="let item of msg.list"><br>{{ item }}</div>
-        <div *ngFor="let link of msg.links"><br><a target="blank" [attr.href]="link">{{ link }}</a></div>
+        <div *ngFor="let link of msg.links"><br><a target="blank" [attr.href]="link.address">{{ link.name }}</a></div>
         <div *ngIf="msg.image"><img class="md-image" width="100%" [src]="'data:image/jpg;base64,'+msg.image" /></div>
       </div>
       <div *ngIf="bot_thinking" class="message loading new"><figure class="avatar"><img src="./assets/avatar_bot.png" /></figure><span></span></div>
