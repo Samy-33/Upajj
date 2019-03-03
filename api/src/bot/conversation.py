@@ -168,7 +168,7 @@ def chatDriver(query,location=None,user=None):
     data_return = {}
     data_return["text"] = response.get('output',None).get('text',"Sorry, couldn't understand")
     if type(data_return["text"]) is list:
-        data_return["text"] = data_return["text"].get(0,"Sorry, couldn't understand")
+        data_return["text"] = data_return["text"][0]
     data_return = clear_flow(data_return)
     return data_return
 
@@ -1146,6 +1146,7 @@ def get_crop_msp_history_data(cropname):
             if data[0] == cropname:
                 data = data[1:]
                 data = list(map(float, data))
+                plt.figure().clear()
                 plt.plot(years, data, linewidth=2.0)
                 plt.xlabel('Half Years')
                 plt.ylabel('Minimum Support Price')
