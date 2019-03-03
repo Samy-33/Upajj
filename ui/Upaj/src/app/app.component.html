@@ -3,29 +3,29 @@
     <h1>Upaj</h1>
     <h2>Farmers helper bot</h2>
     <figure class="avatar">
-      <img src="/assets/avatar_bot.png" />
+      <img src="./assets/avatar_bot.png" />
     </figure>
     {{ this.last_request }}
     <div style="float: right;">
       <select #langSelect (change)="select_lang(langSelect.value)">
-        <option *ngFor="let lang of all_lang" [value]="lang" [selected]="lang.code === selected_lang.code">{{ lang.name }}</option>
+        <option *ngFor="let lang of all_lang" [value]="lang.code" [selected]="lang.code === selected_lang.code">{{ lang.name }}</option>
       </select>
     </div>
   </div>
   <div ngx-auto-scroll class="messages">
     <div class="messages-content">
-      <div *ngFor="let msg of conv_thread" [ngClass]="{'message-personal': msg.by_user}" class="message new"><figure *ngIf="!msg.by_user" class="avatar"><img src="/assets/avatar_bot.png"></figure>{{ msg.msg }}
+      <div *ngFor="let msg of conv_thread" [ngClass]="{'message-personal': msg.by_user}" class="message new"><figure *ngIf="!msg.by_user" class="avatar"><img src="./assets/avatar_bot.png"></figure>{{ msg.msg }}
         <div *ngFor="let item of msg.list"><br>{{ item }}</div>
         <div *ngFor="let link of msg.links"><br><a target="blank" [attr.href]="link">{{ link }}</a></div>
       </div>
-      <div *ngIf="bot_thinking" class="message loading new"><figure class="avatar"><img src="/assets/avatar_bot.png" /></figure><span></span></div>
-      <div *ngIf="current_options.length > 0 && !bot_thinking" class="message new"><figure class="avatar"><img src="/assets/avatar_bot.png" /></figure><span><button *ngFor="let opt of current_options" (click)="push_option(opt)" class="option-button">{{ opt.value }}</button></span></div>
+      <div *ngIf="bot_thinking" class="message loading new"><figure class="avatar"><img src="./assets/avatar_bot.png" /></figure><span></span></div>
+      <div *ngIf="current_options.length > 0 && !bot_thinking" class="message new"><figure class="avatar"><img src="./assets/avatar_bot.png" /></figure><span><button *ngFor="let opt of current_options" (click)="push_option(opt)" class="option-button">{{ opt.value }}</button></span></div>
       <div #chat></div>
     </div>
   </div>
   <div class="message-box">
     <textarea [(ngModel)]="current_query.text" type="text" class="message-input" placeholder="Type message..."></textarea>
-    <button (click)="current_query.text ? push_query(current_query): undefined" type="submit" class="message-submit"><img style="width: 45px;" src="/assets/send.png" /></button>
+    <button (click)="current_query.text ? push_query(current_query): undefined" type="submit" class="message-submit"><img style="width: 45px;" src="./assets/send.png" /></button>
   </div>
 </div>
 <div class="bg"></div>
