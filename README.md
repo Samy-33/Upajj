@@ -1,4 +1,4 @@
-# Upajj - Crop Prediction Application
+# Upaj - Crop Prediction Application
 
 We are using Machine Learning and NLP for predicting the best Crops to be cultivated based on the land type, weather, Minimum Support Price. 
 We are providing a chat interface for providing all the information.
@@ -54,4 +54,4 @@ ng serve
 ```
 ### Our Application
 
-  
+![webp net-resizeimage](https://user-images.githubusercontent.com/25306801/53689639-3113cc00-3d80-11e9-931f-121fff865aef.jpg)
