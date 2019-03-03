@@ -8,6 +8,7 @@ class Translator:
         self.client = translate.Client()
 
     def translate(self, text, target_lang=HINDI_LANGUAGE_CODE):
+        logger.debug(f'Got text: {text} and target_lang: {target_lang}')
         translation = self.client.translate(text, target_language=target_lang)
         logger.debug(f'Translation for {text} to {target_lang}: {translation["translatedText"]}')
         return translation['translatedText']

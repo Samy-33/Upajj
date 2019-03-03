@@ -69,3 +69,19 @@ class BotContext(models.Model):
         bot_context = BotContext.objects.get(session=session)
         bot_context.crop = crop
         bot_context.save()
+
+class CropForcasting(models.Model):
+    location = models.CharField(max_length=50)
+    season = models.CharField(max_length=50)
+    crop = models.CharField(max_length=1000)
+    
+    @staticmethod
+    def set_crop(location,season,crop):
+        CropForcasting.objects.create(location=location,season=season,crop=crop)
+
+    @staticmethod
+    def get_crop(location,season):
+        return CropForcasting.objects.filter(location=location,season=season)
+
+    class Meta():
+        unique_together = ('location', 'season')
