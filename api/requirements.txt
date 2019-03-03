@@ -32,4 +32,7 @@ django-debug-toolbar
 pylint-django==2.0.6
 SpeechRecognition
 google-cloud-translate==1.3.3
+dj-static==0.0.6
+matplotlib==3.0.3
 https://launchpad.net/python-weather-api/trunk/0.3.8/+download/pywapi-0.3.8.tar.gz
+

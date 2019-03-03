@@ -5,7 +5,6 @@
     <figure class="avatar">
       <img src="./assets/avatar_bot.png" />
     </figure>
-    {{ this.last_request }}
     <div style="float: right;">
       <select #langSelect (change)="select_lang(langSelect.value)">
         <option *ngFor="let lang of all_lang" [value]="lang.code" [selected]="lang.code === selected_lang.code">{{ lang.name }}</option>
@@ -24,7 +23,7 @@
     </div>
   </div>
   <div class="message-box">
-    <textarea [(ngModel)]="current_query.text" type="text" class="message-input" placeholder="Type message..."></textarea>
+    <textarea [(ngModel)]="current_query.text" type="text" class="message-input" [attr.placeholder]="current_placeholder"></textarea>
     <button (click)="current_query.text ? push_query(current_query): undefined" type="submit" class="message-submit"><img style="width: 45px;" src="./assets/send.png" /></button>
   </div>
 </div>
