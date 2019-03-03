@@ -53,5 +53,5 @@ python manage.py runserver
 ng serve
 ```
 ### Our Application
-
 ![webp net-resizeimage](https://user-images.githubusercontent.com/25306801/53689639-3113cc00-3d80-11e9-931f-121fff865aef.jpg)
+![webp net-resizeimage 1](https://user-images.githubusercontent.com/25306801/53690463-e5b5e980-3d90-11e9-9e2f-76040ff50ac1.jpg)
