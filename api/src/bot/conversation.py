@@ -166,7 +166,9 @@ def chatDriver(query,location=None,user=None):
         return crop_forecasting(entities,location)
 
     data_return = {}
-    data_return["text"] = response
+    data_return["text"] = response.get('output',None).get('text',"Sorry, couldn't understand")
+    if type(data_return["text"]) is list:
+        data_return["text"] = data_return["text"].get(0,"Sorry, couldn't understand")
     data_return = clear_flow(data_return)
     return data_return
 
@@ -198,8 +200,10 @@ def cultivation(response):
     video_link = []
     count = 0
     for v in vids:
-        temp = 'https://www.youtube.com' + v['href']
-        video_link.append(temp)
+        logger.debug(v)
+        temp_link = 'https://www.youtube.com' + v['href']
+        temp_title = v['title']
+        video_link.append({"name":temp_title,"address":temp_link})
         if(count >= 3):
             break
         count+=1
@@ -248,7 +252,7 @@ def flow_weather(location,user):
     return location_suggestions(None,city=location)
 
 def clear_flow(return_data):
-    return_data["options"] = [{"key":"#clear","value":"Upaj Can help you with"}]
+    return_data["options"] = [{"key":"#clear","value":"Anything else I can help you with ?"}]
     return return_data
 
 def crop_forecasting_season():
@@ -268,7 +272,7 @@ def ChatDriverFlow(query,location=None,user=None):
     if query == "#clear":
         BotContext.set_context_from_session(user,"")
         data = {}
-        data["text"] = "Anything else I can help you with ?"
+        data["text"] = "Upaj Can help you with"
         data["options"] = greeting_flow()
         return data
 
