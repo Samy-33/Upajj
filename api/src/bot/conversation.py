@@ -94,7 +94,7 @@ def chatDriver(query,location=None,user=None):
             BotContext.set_context_from_session(user,"")
         elif ctx == "#minimum_support_price":
             BotContext.set_context_from_session(user,"")
-            query = "What is minimum price for " + query
+            query = "What is minimum support price for (msp) " + query
         elif ctx == "#pesticide":
             BotContext.set_context_from_session(user,"")
             query = "Pesticide for " + query
@@ -187,7 +187,9 @@ def helpme():
     return help_text
 
 def bye():
-    return response_encoder("It was a pleasure to help you.")
+    return_data = {}
+    return_data["text"] = "It was a pleasure to help you."
+    return return_data
 
 def cultivation(response):
     search = response['input']['text']
@@ -216,8 +218,9 @@ def cultivation(response):
 def rephrase(response):
 
     ''' asks user to rephrase itself'''
-
-    return response_encoder("Did not understand! Please try again.")
+    return_data = {}
+    return_data["text"] = "Did not understand! Please try again."
+    return return_data
 
 def greeting(response):
 
@@ -346,7 +349,7 @@ def ChatDriverFlow(query,location=None,user=None):
 
     if query == "#flow_pesticide":
         data_return = {}
-        data_return["text"] = "Please tell me the name Disesase for which you need suggestions of pesticide to be used."
+        data_return["text"] = "Please tell me the name disease for which you need suggestions of pesticide to be used."
         data_return["options"] = []
         BotContext.set_context_from_session(user,"#pesticide")
         return data_return
@@ -476,7 +479,9 @@ def minimum_support_price_prediction(response,crop_name=None,user=None):
     y = crop_price_history['price'].tolist()
 
     if len(crop_price_history) == 0:
-        return response_encoder("No previous cost records found for the given crop.")
+        return_data = {}
+        return_data["text"] = "No previous cost records found for the given crop."
+        return return_data
 
     x = np.array(x).astype(np.float)
     y = np.array(y).astype(np.float)
