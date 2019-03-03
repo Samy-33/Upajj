@@ -143,14 +143,13 @@ Mixins
       float: left;
       padding: 6px 10px 7px;
       border-radius: 10px 10px 10px 0;
-      background: linear-gradient(120deg, #355c26, #7a9118);//#113b0d
+      background: linear-gradient(120deg, #355c26, #7a9118);
       margin: 8px 0;
       font-size: 18px;
       line-height: 1.4;
       margin-left: 35px;
       margin-right: 10px;
       position: relative;
-    //   text-shadow: 0 1px 1px rgba(0, 0, 0, .2);
       
       .timestamp {
         position: absolute;
@@ -191,7 +190,7 @@ Mixins
         float: right;
         color: #fff;
         text-align: right;
-        background: linear-gradient(120deg, #2a7762, #42e28acf);
+        background: #2a7762;
         border-radius: 10px 10px 0 10px;
         
         &::before {
