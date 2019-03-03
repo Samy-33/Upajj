@@ -27,55 +27,66 @@ export class AppComponent implements OnInit, AfterContentChecked {
       name: "English",
       code: "en",
       placeholder: "Ask your query",
+      error_text: "Drat! We ran into an error we didn't expect. Try again maybe!"
     },
     {
       name: "Hindi",
       code: "hi",
       placeholder: "प्रश्न पूछें",
+      error_text: "हम एक त्रुटि में फंस गए, फिर से प्रयास करें"
     },
     {
       name: "Marathi",
       code: "mr",
       placeholder: "प्रश्न विचारा",
+      error_text: "आम्ही त्रुटीमध्ये अडकलो, पुन्हा प्रयत्न करा"
     },
     {
       name: "Gujarati",
       code: "gu",
       placeholder: "ક્વેરી પૂછો",
+      error_text: "અમે ભૂલમાં અટકી ગયા, ફરીથી પ્રયાસ કરો"
     },
     {
       name: "Bengali",
       code: "bn",
       placeholder: "প্রশ্ন জিজ্ঞাসা করুন",
+      error_text: "আমরা একটি ত্রুটি আটকে পেয়েছিলাম, আবার চেষ্টা করুন"
     },
     {
       name: "Kannada",
       code: "kn",
       placeholder: "ಪ್ರಶ್ನೆಯನ್ನು ಕೇಳಿ",
+      error_text: "ನಾವು ದೋಷವೊಂದರಲ್ಲಿ ಸಿಕ್ಕಿಕೊಂಡಿದ್ದೇವೆ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ"
     },
     {
       name: "Malayalam",
       code: "ml",
       placeholder: "ചോദ്യം ചോദിക്കൂ",
+      error_text: "ഞങ്ങൾക്ക് ഒരു തെറ്റുപറ്റി, വീണ്ടും ശ്രമിക്കുക"
     },
     {
       name: "Tamil",
       code: "ta",
       placeholder: "கேள்வி கேட்கவும்",
+      error_text: "ஒரு பிழையில் சிக்கிவிட்டோம், மீண்டும் முயற்சிக்கவும்"
     },
     {
       name: "Telugu",
       code: "te",
       placeholder: "ప్రశ్న అడుగు",
+      error_text: "మేము లోపాన్ని ఎదుర్కొన్నాము, మళ్ళీ ప్రయత్నించండి"
     },
     {
       name: "Urdu",
       code: "ur",
       placeholder: "سوال پوچھیں",
+      error_text: "ہم ایک غلطی میں پھنس گیا، دوبارہ کوشش کریں"
     }
   ];
   selected_lang = this.all_lang[0].code;
   current_placeholder = this.all_lang[0].placeholder;
+  current_error_text = this.all_lang[0].error_text;
   key: string;
   conv_thread = new Array<Message>();
   current_query: Query = new Query();
@@ -117,7 +128,7 @@ export class AppComponent implements OnInit, AfterContentChecked {
       this.last_request = error.statusText;
       console.log(error);
       this.bot_thinking = false;
-      this.push_conv(false, "Drat! We ran into an error we didn't expect. Try again maybe!");
+      this.push_conv(false, this.current_error_text);
     });
     this.scrollToView();
   }
@@ -134,6 +145,7 @@ export class AppComponent implements OnInit, AfterContentChecked {
     for(let i=0;i<this.all_lang.length;i++){
       if(this.all_lang[i].code == lang){
         this.current_placeholder = this.all_lang[i].placeholder;
+        this.current_error_text = this.all_lang[i].error_text;
         break;
       }
     }

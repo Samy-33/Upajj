@@ -6,7 +6,7 @@
       <img src="./assets/avatar_bot.png" />
     </figure>
     <div style="float: right;">
-      <select #langSelect (change)="select_lang(langSelect.value)">
+      <select class="md-select" #langSelect (change)="select_lang(langSelect.value)">
         <option *ngFor="let lang of all_lang" [value]="lang.code" [selected]="lang.code === selected_lang.code">{{ lang.name }}</option>
       </select>
     </div>
