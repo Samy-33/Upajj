@@ -136,7 +136,7 @@ def chatDriver(query,location=None,user=None):
             BotContext.set_location_context_from_session(user,location,"#flow_crop_prediction_season")
             return crop_forecasting_season()
     except Exception as e:
-       logger.debug('Exception:: {e}')
+       logger.debug(f'Exception:: {e}')
 
     if 'greetings' in intents:
         return greeting(response)
@@ -166,7 +166,9 @@ def chatDriver(query,location=None,user=None):
         return crop_forecasting(entities,location)
 
     data_return = {}
-    data_return["text"] = response
+    data_return["text"] = response.get('output',None).get('text',"Sorry, couldn't understand")
+    if type(data_return["text"]) is list:
+        data_return["text"] = data_return["text"].get(0,"Sorry, couldn't understand")
     data_return = clear_flow(data_return)
     return data_return
 
@@ -198,8 +200,10 @@ def cultivation(response):
     video_link = []
     count = 0
     for v in vids:
-        temp = 'https://www.youtube.com' + v['href']
-        video_link.append(temp)
+        logger.debug(v)
+        temp_link = 'https://www.youtube.com' + v['href']
+        temp_title = v['title']
+        video_link.append({"name":temp_title,"address":temp_link})
         if(count >= 3):
             break
         count+=1
@@ -268,7 +272,7 @@ def ChatDriverFlow(query,location=None,user=None):
     if query == "#clear":
         BotContext.set_context_from_session(user,"")
         data = {}
-        data["text"] = "Anything else I can help you with ?"
+        data["text"] = "Upaj Can help you with"
         data["options"] = greeting_flow()
         return data
 
@@ -429,7 +433,7 @@ def pesticide(entities):
         var = {}
         ad = "Shukla Agri Traders, Jabalpur market."
         data = pesticide.loc[pesticide['disease'] == value]
-        var["text"] = "user this pesticide "  + data.iloc[0]['pesticide']
+        var["text"] = "Use this pesticide "  + data.iloc[0]['pesticide'] + " for " + str(value)
         var["text"] += " which you can purchase from " + ad
         var = clear_flow(var)
         return var
@@ -479,17 +483,19 @@ def minimum_support_price_prediction(response,crop_name=None,user=None):
 
     slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
 
-    try:
-        current_year = now.year
-        predicition = current_year*slope + intercept
-
-        if(predicition <= 0):
-            output = str('Sorry! no prediction avialable')
-        else:
-            output = str('The minimum selling price of ' + crop + ' is expected to be \u20B9' +str(predicition.round()))
-    except:
-        output = str('Sorry! no prediction available')
     return_data = {}
+    # try:
+    current_year = now.year
+    predicition = current_year*slope + intercept
+
+    if(predicition <= 0):
+        output = str('Sorry! no prediction avialable')
+    else:
+        return_data["image"] = get_crop_msp_history_data(crop)
+        output = str('The minimum selling price of ' + crop + ' is expected to be \u20B9' +str(predicition.round()))
+    #except Exception as e:
+    #    logger.debug(f'{e}')
+    #    output = str('Sorry! no prediction available')
     return_data["text"] = output
     return_data = clear_flow(return_data)
     return return_data
@@ -1135,7 +1141,6 @@ def get_crop_msp_history_data(cropname):
             if data[0] == cropname:
                 data = data[1:]
                 data = list(map(float, data))
-
                 plt.plot(years, data, linewidth=2.0)
                 plt.xlabel('Half Years')
                 plt.ylabel('Minimum Support Price')
