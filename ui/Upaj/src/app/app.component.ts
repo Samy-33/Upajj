@@ -5,6 +5,7 @@ import { Query } from './models/query.model';
 import { BotResponse } from './models/bot-response.model';
 import { Option } from './models/option.model';
 import { NgxAutoScroll } from "ngx-auto-scroll";
+import { InjectorTypeWithProviders } from '@angular/core/src/di/defs';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -24,14 +25,57 @@ export class AppComponent implements OnInit, AfterContentChecked {
   all_lang = [
     {
       name: "English",
-      code: "en"
+      code: "en",
+      placeholder: "Ask your query",
     },
     {
       name: "Hindi",
-      code: "hi"
+      code: "hi",
+      placeholder: "प्रश्न पूछें",
+    },
+    {
+      name: "Marathi",
+      code: "mr",
+      placeholder: "प्रश्न विचारा",
+    },
+    {
+      name: "Gujarati",
+      code: "gu",
+      placeholder: "ક્વેરી પૂછો",
+    },
+    {
+      name: "Bengali",
+      code: "bn",
+      placeholder: "প্রশ্ন জিজ্ঞাসা করুন",
+    },
+    {
+      name: "Kannada",
+      code: "kn",
+      placeholder: "ಪ್ರಶ್ನೆಯನ್ನು ಕೇಳಿ",
+    },
+    {
+      name: "Malayalam",
+      code: "ml",
+      placeholder: "ചോദ്യം ചോദിക്കൂ",
+    },
+    {
+      name: "Tamil",
+      code: "ta",
+      placeholder: "கேள்வி கேட்கவும்",
+    },
+    {
+      name: "Telugu",
+      code: "te",
+      placeholder: "ప్రశ్న అడుగు",
+    },
+    {
+      name: "Urdu",
+      code: "ur",
+      placeholder: "سوال پوچھیں",
     }
   ];
   selected_lang = this.all_lang[0].code;
+  current_placeholder = this.all_lang[0].placeholder;
   key: string;
   conv_thread = new Array<Message>();
   current_query: Query = new Query();
@@ -60,7 +104,12 @@ export class AppComponent implements OnInit, AfterContentChecked {
     this.http.post<BotResponse>(CHAT_URL, query, httpOptions).subscribe((res) => {
       this.bot_thinking = false;
       // console.log(res);
-      this.push_conv(false, res.text);
+      var message = new Message();
+      message.msg = res.text;
+      message.by_user = false;
+      message.list = res.list;
+      message.links = res.links;
+      this.conv_thread.push(message);
       this.key = res.key;
       this.current_options = res.options ? res.options: new Array<Option>();
     }, (error) => {
@@ -81,6 +130,12 @@ export class AppComponent implements OnInit, AfterContentChecked {
 
   select_lang(lang: string) {
     this.selected_lang = lang;
+    for(let i=0;i<this.all_lang.length;i++){
+      if(this.all_lang[i].code == lang){
+        this.current_placeholder = this.all_lang[i].placeholder;
+        break;
+      }
+    }
     console.log(this.selected_lang);
   }
 
