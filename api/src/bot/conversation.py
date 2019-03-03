@@ -244,7 +244,7 @@ def flow_weather(location,user):
     return location_suggestions(None,city=location)
 
 def clear_flow(return_data):
-    return_data["options"] = [{"key":"#clear","value":"Anything else I can help you with ?"}]
+    return_data["options"] = [{"key":"#clear","value":"Upaj Can help you with"}]
     return return_data
 
 def crop_forecasting_season():
@@ -425,7 +425,7 @@ def pesticide(entities):
         var = {}
         ad = "Shukla Agri Traders, Jabalpur market."
         data = pesticide.loc[pesticide['disease'] == value]
-        var["text"] = "user this pesticide "  + data.iloc[0]['pesticide']
+        var["text"] = "Use this pesticide "  + data.iloc[0]['pesticide'] + " for " + str(value)
         var["text"] += " which you can purchase from " + ad
         var = clear_flow(var)
         return var
