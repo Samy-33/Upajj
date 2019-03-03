@@ -177,13 +177,13 @@ def chatDriver(query,location=None,user=None):
 def customer_support():
     customer = {}
     customer["text"] = "You can call up Kisan Call Center (KCC) through a toll free number 1800-180-1551 for more information"
-    customer["options"] = []
+    customer = clear_flow(customer)
     return customer
 
 def helpme():
     help_text = {}
     help_text["text"] = "I can help you with crop forcasting, pesticide suggestion, fertilizers, weather reports, suggestions to best practice for crop cultivation and much more."
-    help_text["options"] = []
+    help_text = clear_flow(help_text)
     return help_text
 
 def bye():
