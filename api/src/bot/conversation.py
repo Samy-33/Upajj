@@ -499,6 +499,7 @@ def crop_forecasting_v2(user,location,season):
         output2.append("List of possible crop which can be grown with there approximate production this season \n")
         for crp in crops:
             output2.append(crp)
+        return_data = {}
         return_data["list"] = output2
         return_data = clear_flow(return_data)
         return return_data
