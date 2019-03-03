@@ -109,6 +109,7 @@ export class AppComponent implements OnInit, AfterContentChecked {
       message.by_user = false;
       message.list = res.list;
       message.links = res.links;
+      message.image = res.image;
       this.conv_thread.push(message);
       this.key = res.key;
       this.current_options = res.options ? res.options: new Array<Option>();
