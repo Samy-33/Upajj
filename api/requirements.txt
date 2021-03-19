@@ -1,5 +1,5 @@
 Django==2.1.7
-djangorestframework==3.9.1
+djangorestframework==3.11.2
 pytz==2018.9
 atomicwrites==1.2.1
 attrs==18.2.0
